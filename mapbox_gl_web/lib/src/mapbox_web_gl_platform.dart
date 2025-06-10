@@ -44,17 +44,31 @@ class MapboxWebGlPlatform extends MapboxGlPlatform
   }
 
   void _registerViewFactory(Function(int) callback, int identifier) {
-    // ignore: undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(
-        'plugins.flutter.io/mapbox_gl_$identifier', (int viewId) {
-      _mapElement = DivElement()
-        ..style.position = 'absolute'
-        ..style.top = '0'
-        ..style.bottom = '0'
-        ..style.width = '100%';
-      callback(viewId);
-      return _mapElement;
-    });
+    if (!kIsWeb) {
+      // ignore: undefined_prefixed_name
+      ui.platformViewRegistry.registerViewFactory(
+          'plugins.flutter.io/mapbox_gl_$identifier', (int viewId) {
+        _mapElement = DivElement()
+          ..style.position = 'absolute'
+          ..style.top = '0'
+          ..style.bottom = '0'
+          ..style.width = '100%';
+        callback(viewId);
+        return _mapElement;
+      });
+    } else {
+      // ignore: undefined_prefixed_name
+      uiweb.platformViewRegistry.registerViewFactory(
+          'plugins.flutter.io/mapbox_gl_$identifier', (int viewId) {
+        _mapElement = DivElement()
+          ..style.position = 'absolute'
+          ..style.top = '0'
+          ..style.bottom = '0'
+          ..style.width = '100%';
+        callback(viewId);
+        return _mapElement;
+      });
+    }
   }
 
   @override
@@ -190,6 +204,7 @@ class MapboxWebGlPlatform extends MapboxGlPlatform
   Future<CameraPosition?> updateMapOptions(
       Map<String, dynamic> optionsUpdate) async {
     // FIX: why is called indefinitely? (map_ui page)
+    print('updateMapOptions: $optionsUpdate');
     Convert.interpretMapboxMapOptions(optionsUpdate, this);
     return _getCameraPosition();
   }
@@ -198,13 +213,21 @@ class MapboxWebGlPlatform extends MapboxGlPlatform
   Future<bool?> animateCamera(CameraUpdate cameraUpdate,
       {Duration? duration}) async {
     final cameraOptions = Convert.toCameraOptions(cameraUpdate, _map);
-
+    print('animateCamera: $cameraOptions');
     final around = getProperty(cameraOptions, 'around');
+    print('animateCamera around: ${around.jsObject}');
     final bearing = getProperty(cameraOptions, 'bearing');
+    print('animateCamera bearing: $bearing');
     final center = getProperty(cameraOptions, 'center');
+    print('animateCamera center: $center');
     final pitch = getProperty(cameraOptions, 'pitch');
+    print('animateCamera pitch: $pitch');
     final zoom = getProperty(cameraOptions, 'zoom');
-
+    print('animateCamera zoom: $zoom');
+    try {
+      print(
+          'animateCamera: $around, $bearing, $center, $pitch, $zoom, $duration');
+    } catch (e) {}
     _map.flyTo({
       if (around.jsObject != null) 'around': around,
       if (bearing != null) 'bearing': bearing,
@@ -227,6 +250,7 @@ class MapboxWebGlPlatform extends MapboxGlPlatform
   @override
   Future<void> updateMyLocationTrackingMode(
       MyLocationTrackingMode myLocationTrackingMode) async {
+    print('updateMyLocationTrackingMode web_gl: $myLocationTrackingMode');
     setMyLocationTrackingMode(myLocationTrackingMode.index);
   }
 
@@ -294,6 +318,8 @@ class MapboxWebGlPlatform extends MapboxGlPlatform
     if (filter != null) {
       options['filter'] = filter;
     }
+    print(
+        'mapbox_web_gl_platform.dart: queryRenderedFeaturesInRect: options: $options');
     return _map
         .queryRenderedFeatures([
           [rect.left, rect.bottom],
@@ -451,6 +477,7 @@ class MapboxWebGlPlatform extends MapboxGlPlatform
   }
 
   void _addGeolocateControl({bool trackUserLocation = false}) {
+    print('addGeolocateControl');
     _removeGeolocateControl();
     _geolocateControl = GeolocateControl(
       GeolocateControlOptions(
@@ -604,6 +631,7 @@ class MapboxWebGlPlatform extends MapboxGlPlatform
 
   @override
   void setMyLocationEnabled(bool myLocationEnabled) {
+    print('setMyLocationEnabled: $myLocationEnabled');
     if (myLocationEnabled) {
       _addGeolocateControl(trackUserLocation: false);
     } else {
@@ -625,7 +653,7 @@ class MapboxWebGlPlatform extends MapboxGlPlatform
     if (myLocationTrackingMode == 0) {
       _addGeolocateControl(trackUserLocation: false);
     } else {
-      print('Only one tracking mode available in web');
+      print('Only one tracking mode available in web test');
       _addGeolocateControl(trackUserLocation: true);
     }
   }
