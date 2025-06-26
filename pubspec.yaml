@@ -10,10 +10,12 @@ dependencies:
     git:
       url: https://github.com/lecanhhiep/mapbox16.git
       path: mapbox_gl_platform_interface
+      ref: v002
   mapbox_gl_web:
     git:
       url: https://github.com/lecanhhiep/mapbox16.git
       path: mapbox_gl_web
+      ref: v002
   collection: ^1.15.0
 
 dependency_overrides:
