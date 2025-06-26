@@ -87,6 +87,9 @@ class SymbolOptions {
     this.geometry,
     this.zIndex,
     this.draggable,
+    this.iconAllowOverlap,
+    this.textAllowOverlap,
+
   });
 
   final double? iconSize;
@@ -120,6 +123,9 @@ class SymbolOptions {
   final int? zIndex;
   final bool? draggable;
 
+  final bool? iconAllowOverlap;
+  final bool? textAllowOverlap;
+
   static const SymbolOptions defaultOptions = SymbolOptions();
 
   SymbolOptions copyWith(SymbolOptions changes) {
@@ -152,6 +158,10 @@ class SymbolOptions {
       geometry: changes.geometry ?? geometry,
       zIndex: changes.zIndex ?? zIndex,
       draggable: changes.draggable ?? draggable,
+
+      iconAllowOverlap: changes.iconAllowOverlap ?? iconAllowOverlap,
+      textAllowOverlap: changes.textAllowOverlap ?? textAllowOverlap,
+
     );
   }
 
@@ -189,6 +199,12 @@ class SymbolOptions {
     addIfPresent('textHaloColor', textHaloColor);
     addIfPresent('textHaloWidth', textHaloWidth);
     addIfPresent('textHaloBlur', textHaloBlur);
+
+    addIfPresent('iconAllowOverlap', iconAllowOverlap);
+    addIfPresent('textAllowOverlap', textAllowOverlap);
+
+
+
     if (addGeometry) {
       addIfPresent('geometry', geometry?.toJson());
     }
