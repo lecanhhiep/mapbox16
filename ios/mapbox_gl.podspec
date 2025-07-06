@@ -19,5 +19,9 @@ A new Flutter plugin.
   s.dependency 'Mapbox-iOS-SDK', '~> 6.4.0'
   s.swift_version = '4.2'
   s.ios.deployment_target = '9.0'
+
+  s.pod_target_xcconfig = {
+    'ENABLE_BITCODE' => 'NO'
+  }
 end
 
